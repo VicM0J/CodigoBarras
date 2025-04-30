@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Código de Barras</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom right, #c3aed6, #735d78);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-container {
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+            padding: 20px 0;
+            background-color: #ffffff;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+
+        .header-container img {
+            width: 150px;
+            position: absolute;
+            top: 15px;
+            left: 20px;
+        }
+
+        .header-container h1 {
+            text-align: center;
+            color: #4b2c5e;
+            font-size: 32px;
+            margin: 0;
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            background-color: #c3aed6;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 30px;
+        }
+
+        label {
+            display: block;
+            font-size: 15px;
+            color: #514f51;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border: 2px solid #d1a4f1;
+        }
+
+        /* ------------------------------------------------------------------- */
+        /* Estilo personalizado del botón desde Uiverse.io */
+.button {
+  padding: 1em 2em;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #ffffff;
+  transition: all 1000ms;
+  font-size: 15px;
+  position: relative;
+  overflow: hidden;
+  outline: 2px solid #8e226e;
+  background: transparent;
+}
+
+.button:hover {
+  color: #ffffff;
+  transform: scale(1.1);
+  outline: 2px solid #8e226e;
+  box-shadow: 4px 5px 17px -4px #6d2691;
+}
+
+.button::before {
+  content: "";
+  position: absolute;
+  left: -50px;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: #6d2691;
+  transform: skewX(45deg);
+  z-index: -1;
+  transition: width 1000ms;
+}
+
+.button:hover::before {
+  width: 250%;
+}
+/* ---------------------------------------------------- */
+
+        #barcode {
+            display: block;
+            margin: 30px auto 10px;
+        }
+
+        #download-btn {
+            display: none;
+            background-color: #8e44ad;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        #download-btn:hover {
+            background-color: #9b59b6;
+        }
+
+        @media screen and (max-width: 768px) {
+            .form-container {
+                grid-template-columns: 1fr;
+            }
+
+            .header-container img {
+                width: 120px;
+                top: 10px;
+                left: 10px;
+            }
+        }
+        #download-btn {
+  display: none;
+  margin-top: 20px;
+}
+
+    </style>
+</head>
+<body>
+
+<div class="header-container">
+    <img src="LogoJASANA.png" alt="Logo">
+    <h1>Código de Barras</h1>
+</div>   
+
+<div class="container">
+    <div class="form-container">
+        <div>
+            <label for="familia">Familia (letra):</label>
+            <input type="text" id="familia" maxlength="1" required>
+        </div>
+
+        <div>
+            <label for="modelo">Modelo (5 dígitos):</label>
+            <input type="text" id="modelo" maxlength="5" required>
+        </div>
+
+        <div>
+            <label for="tipo">Tipo (1 dígito):</label>
+            <input type="text" id="tipo" maxlength="1" required>
+        </div>
+
+        <div>
+            <label for="tela">Tela (4 dígitos):</label>
+            <input type="text" id="tela" maxlength="4" required>
+        </div>
+
+        <div>
+            <label for="bordado">Bordado (6 dígitos):</label>
+            <input type="text" id="bordado" maxlength="6" required>
+        </div>
+
+        <div>
+            <label for="chip">Chip (letra):</label>
+            <input type="text" id="chip" maxlength="1" required>
+        </div>
+
+        <div>
+            <label for="color">Color (3 dígitos):</label>
+            <input type="text" id="color" maxlength="3" required>
+        </div>
+
+        <div>
+            <label for="talla">Talla (3 dígitos):</label>
+            <input type="text" id="talla" maxlength="3" required>
+        </div>
+
+        <div>
+            <label for="contraste">Contraste (1 dígito):</label>
+            <input type="text" id="contraste" maxlength="1" required>
+        </div>
+
+<button class="button" onclick="generarCodigo()">Generar Código de Barras</button>
+
+    </div>
+
+    <svg id="barcode"></svg>
+    <button id="download-btn" class="button" onclick="downloadBarcode()">Descargar en PNG</button>
+
+</div>
+
+<script>
+    let barcodeData = "";
+
+function generarCodigo() {
+    const familia = document.getElementById('familia').value;
+    const modelo = document.getElementById('modelo').value;
+    const tipo = document.getElementById('tipo').value;
+    const tela = document.getElementById('tela').value;
+    const bordado = document.getElementById('bordado').value;
+    const chip = document.getElementById('chip').value;
+    const color = document.getElementById('color').value;
+    const talla = document.getElementById('talla').value;
+    const contraste = document.getElementById('contraste').value;
+
+    barcodeData = familia + modelo + tipo + tela + bordado + chip + color + talla + contraste;
+
+    JsBarcode("#barcode", barcodeData, {
+        format: "CODE128",
+        lineColor: "#000000",
+        width: 2,
+        height: 100,
+        displayValue: true
+    });
+
+    document.getElementById('download-btn').style.display = 'inline-block';
+}
+
+function downloadBarcode() {
+    const svg = document.getElementById("barcode");
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const img = new Image();
+    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+
+    img.onload = function () {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        canvas.toBlob(function (blob) {
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = barcodeData + ".png"; // Aquí usamos el código como nombre
+            link.click();
+        });
+    };
+}
+
+</script>
+
+</body>
+</html>
